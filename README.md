@@ -24,9 +24,9 @@
 - **Data Integrity & Consistency**: Prevents stock inconsistencies and overselling with strict transactional support.
 
 ### **Hybrid Database Architecture Benefits**
-✅ **Scalability & Flexibility**: NoSQL (MongoDB) for unstructured product data, SQL (MySQL) for structured transactional data.
-✅ **Performance Optimization**: MongoDB for fast product catalog queries, MySQL for transactional integrity.
-✅ **Consistency vs. Availability**: MySQL prioritizes consistency (inventory/orders), MongoDB prioritizes availability (products).
+- ✅ **Scalability & Flexibility**: NoSQL (MongoDB) for unstructured product data, SQL (MySQL) for structured transactional data.
+- ✅ **Performance Optimization**: MongoDB for fast product catalog queries, MySQL for transactional integrity.
+- ✅ **Consistency vs. Availability**: MySQL prioritizes consistency (inventory/orders), MongoDB prioritizes availability (products).
 
 ---
 
