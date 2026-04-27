@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   ## Postgres Docker Compose Config
   postgres-order:
@@ -16,7 +14,7 @@ services:
       - "5431"
     ports:
       - "5431:5431"
-    command: -p 5431
+    command: -p 5431 # Override the default postgres port (5432) with 5431 because inventory service is running on 5432
     restart: always
 
   postgres-inventory:
