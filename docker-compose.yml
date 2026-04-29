@@ -1,60 +1,70 @@
 services:
-  ## Postgres Docker Compose Config
+  ############################
+  # Infrastructure Services  #
+  ############################
+
+  # MongoDB (for product-service)
+  mongo:
+    container_name: mongo
+    image: mongo:7.0
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-net
+
+  # PostgreSQL for order-service
   postgres-order:
     container_name: postgres-order
-    image: postgres
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5431:5432"
     environment:
       POSTGRES_DB: order-service
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      PGDATA: /data/postgres
     volumes:
       - ./postgres-order:/data/postgres
-    expose:
-      - "5431"
-    ports:
-      - "5431:5431"
-    command: -p 5431 # Override the default postgres port (5432) with 5431 because inventory service is running on 5432
-    restart: always
+    networks:
+      - microservices-net
 
+  # PostgreSQL for inventory-service
   postgres-inventory:
     container_name: postgres-inventory
-    image: postgres
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: inventory-service
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      PGDATA: /data/postgres
     volumes:
       - ./postgres-inventory:/data/postgres
-    ports:
-      - "5432:5432"
-    restart: always
+    networks:
+      - microservices-net
 
-  ## Mongo Docker Compose Config
-  mongo:
-    container_name: mongo
-    image: mongo:4.4.14-rc0-focal
-    restart: always
-    ports:
-      - "27017:27017"
-    expose:
-      - "27017"
-    volumes:
-      - ./mongo-data:/data/db
-
-  ## Kafka Docker Compose Config
+  # Zookeeper (for Kafka)
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
+    image: confluentinc/cp-zookeeper:7.6.0
     container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices-net
 
+  # Kafka Broker
   broker:
-    image: confluentinc/cp-kafka:7.0.1
+    image: confluentinc/cp-kafka:7.6.0
     container_name: broker
     ports:
       - "9092:9092"
@@ -62,65 +72,97 @@ services:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - microservices-net
 
-  ## Eureka Server
+  ############################
+  # Microservices            #
+  ############################
+
+  # Eureka Discovery Server
   discovery-server:
-    image: mayankyadav25/discovery-server:latest
+    build:
+      context: ./discovery-server
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/discovery-server:java21
     container_name: discovery-server
     ports:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
 
+  # API Gateway (Spring Cloud Gateway)
   api-gateway:
-    image: mayankyadav25/api-gateway:latest
+    build:
+      context: ./api-gateway
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/api-gateway:java21
     container_name: api-gateway
     ports:
       - "8181:8080"
-    expose:
-      - "8181"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
     depends_on:
       - discovery-server
+    networks:
+      - microservices-net
 
-  ## Product-Service Docker Compose Config
+  # Product Service (MongoDB)
   product-service:
+    build:
+      context: ./product-service
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/product-service:java21
     container_name: product-service
-    image: mayankyadav25/product-service:latest
+    ports:
+      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - mongo
       - discovery-server
       - api-gateway
+    networks:
+      - microservices-net
 
-  ## Order-Service Docker Compose Config
+  # Order Service (PostgreSQL + Kafka)
   order-service:
+    build:
+      context: ./order-service
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/order-service:java21
     container_name: order-service
-    image: mayankyadav25/order-service:latest
     ports:
       - "8081:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5432/order-service
     depends_on:
       - postgres-order
       - broker
       - discovery-server
       - api-gateway
+    networks:
+      - microservices-net
 
-  ## Inventory-Service Docker Compose Config
+  # Inventory Service (PostgreSQL)
   inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/inventory-service:java21
     container_name: inventory-service
-    image: mayankyadav25/inventory-service:latest
+    ports:
+      - "8082:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
@@ -128,21 +170,34 @@ services:
       - postgres-inventory
       - discovery-server
       - api-gateway
+    networks:
+      - microservices-net
 
-  ## Notification-Service Docker Compose Config
+  # Notification Service (Kafka Consumer)
   notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: ../Dockerfile
+    image: mayankyadav25/notification-service:java21
     container_name: notification-service
-    image: mayankyadav25/notification-service:latest
+    ports:
+      - "8083:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - broker
       - discovery-server
       - api-gateway
+    networks:
+      - microservices-net
 
-  ## Prometheus
+  ############################
+  # Observability            #
+  ############################
+
+  # Prometheus
   prometheus:
-    image: prom/prometheus:v2.37.1
+    image: prom/prometheus:v2.51.2
     container_name: prometheus
     restart: always
     ports:
@@ -154,17 +209,29 @@ services:
       - inventory-service
       - order-service
       - notification-service
+    networks:
+      - microservices-net
 
+  # Grafana
   grafana:
-    image: grafana/grafana-oss:8.5.2
+    image: grafana/grafana-oss:10.2.0
     container_name: grafana
     restart: always
     ports:
       - "3000:3000"
-    links:
-      - prometheus:prometheus
     volumes:
       - ./grafana:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
+    depends_on:
+      - prometheus
+    networks:
+      - microservices-net
+
+volumes:
+  mongo-data:
+
+networks:
+  microservices-net:
+    driver: bridge
