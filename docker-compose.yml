@@ -34,7 +34,7 @@ services:
   ## Mongo Docker Compose Config
   mongo:
     container_name: mongo
-    image: mongo:4.4.14-rc0-focal
+    image: mongo:7.0
     restart: always
     ports:
       - "27017:27017"
@@ -77,6 +77,8 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
 
   api-gateway:
     image: mayankyadav25/api-gateway:latest
@@ -88,6 +90,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
     depends_on:
       - discovery-server
 
@@ -97,6 +101,8 @@ services:
     image: mayankyadav25/product-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
     depends_on:
       - mongo
       - discovery-server
@@ -111,6 +117,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
     depends_on:
       - postgres-order
       - broker
@@ -124,6 +132,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
     depends_on:
       - postgres-inventory
       - discovery-server
@@ -135,6 +145,8 @@ services:
     image: mayankyadav25/notification-service:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_METRICS_ENABLE_SYSTEM_CPU=false
+      - MANAGEMENT_METRICS_ENABLE_PROCESS_CPU=false
     depends_on:
       - broker
       - discovery-server
