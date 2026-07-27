@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.mayanktech.orderservice.dto.InventoryResponse;
+import com.mayanktech.common.dto.InventoryResponse;
+import com.mayanktech.common.event.OrderPlacedEvent;
 import com.mayanktech.orderservice.dto.OrderLineItemsDto;
 import com.mayanktech.orderservice.dto.OrderRequest;
-import com.mayanktech.orderservice.event.OrderPlacedEvent;
 import com.mayanktech.orderservice.modal.Order;
 import com.mayanktech.orderservice.modal.OrderLineItems;
 import com.mayanktech.orderservice.repository.OrderRepository;
@@ -21,13 +21,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
 
 	private final OrderRepository orderRepository;
 	private final WebClient.Builder webClientBuilder;
 	private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
+	@Transactional
 	public String placeOrder(OrderRequest orderRequest) {
 		Order order = new Order();
 		order.setOrderNumber(UUID.randomUUID().toString());

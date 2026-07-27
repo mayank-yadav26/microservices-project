@@ -109,6 +109,7 @@
 		</pluginManagement>
 	</build>
 	<modules>
+		<module>common-model</module>
 		<module>product-service</module>
 		<module>order-service</module>
 		<module>inventory-service</module>

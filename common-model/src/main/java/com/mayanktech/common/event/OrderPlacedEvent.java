@@ -1,4 +1,4 @@
-package com.mayanktech.notificationservice.event;
+package com.mayanktech.common.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

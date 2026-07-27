@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mayanktech.inventoryservice.dto.InventoryResponse;
+import com.mayanktech.common.dto.InventoryResponse;
 import com.mayanktech.inventoryservice.service.InventoryService;
 
 import lombok.RequiredArgsConstructor;

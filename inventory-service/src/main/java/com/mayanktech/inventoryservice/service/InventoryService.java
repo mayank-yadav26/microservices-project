@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mayanktech.inventoryservice.dto.InventoryResponse;
+import com.mayanktech.common.dto.InventoryResponse;
 import com.mayanktech.inventoryservice.modal.Inventory;
 import com.mayanktech.inventoryservice.repository.InventoryRepository;
 

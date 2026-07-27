@@ -1,4 +1,4 @@
-package com.mayanktech.inventoryservice.dto;
+package com.mayanktech.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class InventoryResponse {
-
 	private String skuCode;
 	private Boolean isInStock;
 }
