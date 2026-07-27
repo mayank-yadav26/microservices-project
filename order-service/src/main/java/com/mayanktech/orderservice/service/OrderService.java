@@ -18,9 +18,11 @@ import com.mayanktech.orderservice.modal.OrderLineItems;
 import com.mayanktech.orderservice.repository.OrderRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
 	private final OrderRepository orderRepository;
@@ -50,7 +52,16 @@ public class OrderService {
 
 		if (allProductsInStock) {
 			orderRepository.save(order);
-			kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()));
+			kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()))
+					.whenComplete((result, ex) -> {
+						if (ex != null) {
+							log.error("Failed to send OrderPlacedEvent for order {}: {}",
+									order.getOrderNumber(), ex.getMessage());
+						} else {
+							log.info("Successfully sent OrderPlacedEvent for order {}",
+									order.getOrderNumber());
+						}
+					});
 			return "Order Placed Successfully!";
 		} else {
 			return "Product is not in stock, please try again later.";

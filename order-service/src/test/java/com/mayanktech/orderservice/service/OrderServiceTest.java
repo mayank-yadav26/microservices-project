@@ -78,7 +78,8 @@ class OrderServiceTest {
 
 		mockInventoryCheck(new InventoryResponse[]{inventoryResponse});
 		when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-		when(kafkaTemplate.send(anyString(), any(OrderPlacedEvent.class))).thenReturn(null);
+		when(kafkaTemplate.send(anyString(), any(OrderPlacedEvent.class)))
+				.thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
 
 		String result = orderService.placeOrder(orderRequest);
 
