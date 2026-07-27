@@ -45,12 +45,8 @@ public class OrderService {
 						uriBuilder -> uriBuilder.queryParam("skuCodeList", skuCodesList).build())
 				.retrieve().bodyToMono(InventoryResponse[].class).block();
 
-		if (inventoryResponseArray.length == 0) {
-			return "Product is not in stock, please try again later.";
-		}
-		
 		boolean allProductsInStock = Arrays.stream(inventoryResponseArray)
-				.allMatch(inventoryResponse -> inventoryResponse.getIsInStock());
+				.allMatch(InventoryResponse::getIsInStock);
 
 		if (allProductsInStock) {
 			orderRepository.save(order);

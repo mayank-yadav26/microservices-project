@@ -14,6 +14,7 @@ import com.mayanktech.productservice.dto.ProductRequest;
 import com.mayanktech.productservice.dto.ProductResponse;
 import com.mayanktech.productservice.service.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,7 +26,7 @@ public class ProductController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createProduct(@RequestBody ProductRequest productRequest) {
+	public void createProduct(@RequestBody @Valid ProductRequest productRequest) {
 		productService.createProduct(productRequest);
 	}
 	

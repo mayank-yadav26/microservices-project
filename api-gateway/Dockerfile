@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre-alpine
 
 COPY target/*.jar app.jar
 
