@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mayanktech.productservice.dto.ProductRequest;
 import com.mayanktech.productservice.dto.ProductResponse;
-import com.mayanktech.productservice.modal.Product;
+import com.mayanktech.productservice.model.Product;
 import com.mayanktech.productservice.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)

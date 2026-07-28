@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.mayanktech.inventoryservice.modal.Inventory;
+import com.mayanktech.inventoryservice.model.Inventory;
 
 public interface InventoryRepository extends JpaRepository<Inventory,Long>{
 

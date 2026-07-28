@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
-import com.mayanktech.inventoryservice.modal.Inventory;
+import com.mayanktech.inventoryservice.model.Inventory;
 import com.mayanktech.inventoryservice.repository.InventoryRepository;
 
 @SpringBootApplication

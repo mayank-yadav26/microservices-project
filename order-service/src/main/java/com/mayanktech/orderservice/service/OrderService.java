@@ -13,8 +13,8 @@ import com.mayanktech.common.dto.InventoryResponse;
 import com.mayanktech.common.event.OrderPlacedEvent;
 import com.mayanktech.orderservice.dto.OrderLineItemsDto;
 import com.mayanktech.orderservice.dto.OrderRequest;
-import com.mayanktech.orderservice.modal.Order;
-import com.mayanktech.orderservice.modal.OrderLineItems;
+import com.mayanktech.orderservice.model.Order;
+import com.mayanktech.orderservice.model.OrderLineItems;
 import com.mayanktech.orderservice.repository.OrderRepository;
 
 import lombok.RequiredArgsConstructor;

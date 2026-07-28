@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.mayanktech.productservice.dto.ProductRequest;
 import com.mayanktech.productservice.dto.ProductResponse;
-import com.mayanktech.productservice.modal.Product;
+import com.mayanktech.productservice.model.Product;
 import com.mayanktech.productservice.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;

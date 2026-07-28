@@ -1,4 +1,4 @@
-package com.mayanktech.orderservice.modal;
+package com.mayanktech.orderservice.model;
 
 import java.math.BigDecimal;
 

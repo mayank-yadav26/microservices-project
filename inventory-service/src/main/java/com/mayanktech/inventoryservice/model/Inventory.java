@@ -1,4 +1,4 @@
-package com.mayanktech.inventoryservice.modal;
+package com.mayanktech.inventoryservice.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

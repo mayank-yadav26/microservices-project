@@ -1,4 +1,4 @@
-package com.mayanktech.productservice.modal;
+package com.mayanktech.productservice.model;
 
 import java.math.BigDecimal;
 

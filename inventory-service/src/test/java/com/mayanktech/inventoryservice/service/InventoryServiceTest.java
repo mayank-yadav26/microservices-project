@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mayanktech.common.dto.InventoryResponse;
-import com.mayanktech.inventoryservice.modal.Inventory;
+import com.mayanktech.inventoryservice.model.Inventory;
 import com.mayanktech.inventoryservice.repository.InventoryRepository;
 
 @ExtendWith(MockitoExtension.class)
